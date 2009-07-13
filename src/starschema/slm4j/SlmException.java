@@ -25,17 +25,26 @@
 
 package starschema.slm4j;
 
-/**
+/** Common exception class for slm4j package
  *
  * @author Gabor Toth
  */
-public class LicenseGeneratorException extends Exception {
+public class SlmException extends Exception {
     private String message;
 
-    public LicenseGeneratorException(String message) {
+    /** Constructor with error message
+     *
+     * @param message Error message
+     */
+    public SlmException(String message) {
         this.message = message;
     }
 
+    /** Returns error text
+     *
+     * @return Error text
+     */
+    @Override
     public String getMessage() {
         return message;
     }

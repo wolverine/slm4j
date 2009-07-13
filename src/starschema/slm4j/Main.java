@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
+/** Main class for slm4j command line tool
  *
  * @author Gabor Toth
  */
@@ -41,6 +41,10 @@ public class Main {
     private static final String PARAMETER_PRIVATE = "-private";
     private static final String PARAMETER_SIGNATURE = "-sign";
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             executeApplication(args);
@@ -50,7 +54,12 @@ public class Main {
         }
     }
 
-    public static boolean executeApplication(String[] arguments) throws LicenseGeneratorException {
+    /** Main entry function for slm4j command line tool
+     *
+     * @param arguments Command line arguments
+     * @return true on success, otherwise false
+     */
+    public static boolean executeApplication(String[] arguments) {
         HashMap parameters = new HashMap();
         Set parameterSet;
         Set parameterSetSign = new HashSet();
@@ -69,18 +78,19 @@ public class Main {
 
             usageString = new String[9];
 
-            usageString[0] = "Usage: java -jar LicenseGenerator.jar option parameters";
-            usageString[1] = " option:";
-            usageString[2] = "  sign - Write a signature in in the signature file after the content of the source file.";
-            usageString[3] = "  verify - Verifies a signature file based on the key file.";
-            usageString[4] = " parameters:";
-            usageString[5] = "  -license license_file - Source file to add signature.";
-            usageString[6] = "  -public public_key_file - Public key file. If sign then the public key will be written in this file. If verify then the verification will based on the public key stored in this file.";
-            usageString[7] = "  -private private_key_file - Private key file. Available only for sign. The private key will be stored in this file.";
-            usageString[8] = "  -signed signature_file - The signed license file. It is the output file of the sign and the input of the verification.";
+            usageString[0] = "Usage: java -jar SignatureCreator.jar <action> [parameters]";
+            usageString[1] = "\nActions:";
+            usageString[2] = "  sign                         Write a signature in in the signature file after the content of the source file.";
+            usageString[3] = "  verify                       Verifies a signature file based on the key file.";
+            usageString[4] = "\nParameters:";
+            usageString[5] = "  -license license_file        Source file to add signature.";
+            usageString[6] = "  -public public_key_file      Public key file. If sign then the public key will be written in this file. If verify then the verification will based on the public key stored in this file.";
+            usageString[7] = "  -private private_key_file    Private key file. Available only for sign. The private key will be stored in this file.";
+            usageString[8] = "  -signed signature_file       The signed license file. It is the output file of the sign and the input of the verification.";
 
             if (arguments.length == 0) {
-                System.out.println(usageString[0]);
+                for( int i = 0; i < usageString.length ; i++ )
+                    System.out.println( usageString[i]);
                 return false;
             }
 
@@ -127,7 +137,7 @@ public class Main {
 
             return true;
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in signature generation or verification ( " + ex.getMessage() + " )");
+            return false;
         }
     }
 }

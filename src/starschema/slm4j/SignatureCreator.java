@@ -29,7 +29,7 @@ import java.io.*;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-/**
+/** Signs an input file with DSA algorythm
  *
  * @author Gabor Toth
  */
@@ -46,7 +46,7 @@ public class SignatureCreator {
     private static final String SIGNATURE_END = "----- END SIGNATURE -----";
     private static final int SIGNATURE_LINE_LENGTH = 20;
 
-    private void generateKeys() throws LicenseGeneratorException {
+    private void generateKeys() throws SlmException {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
@@ -56,20 +56,20 @@ public class SignatureCreator {
             privateKey = pair.getPrivate();
             publicKey = pair.getPublic();
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in key generation ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in key generation ( " + ex.getMessage() + " )");
         }
     }
 
-    private void initializeSignatureSign() throws LicenseGeneratorException {
+    private void initializeSignatureSign() throws SlmException {
         try {
             signature = Signature.getInstance("SHA1withDSA", "SUN");
             signature.initSign(privateKey);
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in initializing signature for signing ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in initializing signature for signing ( " + ex.getMessage() + " )");
         }
     }
 
-    private void processSourceFile(String sourceFile) throws LicenseGeneratorException {
+    private void processSourceFile(String sourceFile) throws SlmException {
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
         try {
@@ -91,7 +91,7 @@ public class SignatureCreator {
             }
 
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in processing source file ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in processing source file ( " + ex.getMessage() + " )");
         } finally {
             try {
                 bufferedReader.close();
@@ -101,15 +101,15 @@ public class SignatureCreator {
         }
     }
 
-    private char[] generateSignature() throws LicenseGeneratorException {
+    private char[] generateSignature() throws SlmException {
         try {
             return Base64Coder.encode(signature.sign());
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in signature creation ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in signature creation ( " + ex.getMessage() + " )");
         }
     }
 
-    private void writeSignature(String signatureFile) throws LicenseGeneratorException {
+    private void writeSignature(String signatureFile) throws SlmException {
         FileWriter fileWriter = null;
 
         try {
@@ -131,7 +131,7 @@ public class SignatureCreator {
 
             fileWriter.write(EOL + SIGNATURE_END);
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in writing signature to file " + signatureFile + " ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in writing signature to file " + signatureFile + " ( " + ex.getMessage() + " )");
         } finally {
             try {
                 fileWriter.close();
@@ -140,7 +140,7 @@ public class SignatureCreator {
         }
     }
 
-    private void writePrivateKey(String privateKeyFile) throws LicenseGeneratorException {
+    private void writePrivateKey(String privateKeyFile) throws SlmException {
         FileWriter fileWriter = null;
 
         try {
@@ -155,7 +155,7 @@ public class SignatureCreator {
                 }
             }
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in writing private key to file " + privateKeyFile + " ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in writing private key to file " + privateKeyFile + " ( " + ex.getMessage() + " )");
         } finally {
             try {
                 fileWriter.close();
@@ -164,7 +164,7 @@ public class SignatureCreator {
         }
     }
 
-    private void writePublicKey(String publicKeyFile) throws LicenseGeneratorException {
+    private void writePublicKey(String publicKeyFile) throws SlmException {
         FileWriter fileWriter = null;
 
         try {
@@ -179,7 +179,7 @@ public class SignatureCreator {
                 }
             }
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in writing public key to file " + publicKeyFile + " ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in writing public key to file " + publicKeyFile + " ( " + ex.getMessage() + " )");
         } finally {
             try {
                 fileWriter.close();
@@ -188,7 +188,7 @@ public class SignatureCreator {
         }
     }
 
-    private boolean readPrivateKey(String privateKeyFile) throws LicenseGeneratorException {
+    private boolean readPrivateKey(String privateKeyFile) throws SlmException {
         FileReader fileReader = null;
         BufferedReader bufferedReader;
 
@@ -210,7 +210,7 @@ public class SignatureCreator {
 
             return true;
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in reading private key from file " + privateKeyFile + " ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in reading private key from file " + privateKeyFile + " ( " + ex.getMessage() + " )");
         } finally {
             try {
                 fileReader.close();
@@ -219,7 +219,16 @@ public class SignatureCreator {
         }
     }
 
-    public void signLicense(String licenseFile, String publicKeyFile, String privateKeyFile, String signatureFile) throws Exception {
+
+    /** Signs an input file by the provided DSA keys
+     *
+     * @param licenseFile Input file to sign
+     * @param publicKeyFile Location of the previously generated public key file
+     * @param privateKeyFile Location of the previously generated private key file
+     * @param signatureFile Signed, output file (eg. user's license)
+     * @throws SlmException On any error (File IO problems and CryptoAPI errors)
+     */
+    public void signLicense(String licenseFile, String publicKeyFile, String privateKeyFile, String signatureFile) throws SlmException {
         try {
             if (!readPrivateKey(privateKeyFile)) {
                 generateKeys();
@@ -232,7 +241,7 @@ public class SignatureCreator {
                 writePrivateKey(privateKeyFile);
             }
         } catch (Exception ex) {
-            throw new LicenseGeneratorException("Error in signature generation ( " + ex.getMessage() + " )");
+            throw new SlmException("Error in signature generation ( " + ex.getMessage() + " )");
         }
     }
 }

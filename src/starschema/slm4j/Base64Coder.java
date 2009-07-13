@@ -1,3 +1,5 @@
+package starschema.slm4j;
+
 /**
 * A Base64 Encoder/Decoder.
 *
@@ -20,9 +22,6 @@
 *  &nbsp; New method encode(byte[],int) added.<br>
 *  &nbsp; New method decode(String) added.<br>
 */
-
-package starschema.slm4j;
-
 public class Base64Coder {
 
 // Mapping table from 6-bit nibbles to Base64 characters.
