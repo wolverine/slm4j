@@ -21,7 +21,7 @@
 *  &nbsp; New method decode(String) added.<br>
 */
 
-package starschema.signaturecreator;
+package starschema.slm4j;
 
 public class Base64Coder {
 

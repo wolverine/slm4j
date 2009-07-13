@@ -75,9 +75,9 @@
         <mkdir dir="dist" />
         <jar destfile="dist/SignatureValidator.jar"
              basedir="build/classes"
-             includes="starschema/signaturecreator/Base64Coder.class,
-                       starschema/signaturecreator/SignatureValidator.class,
-                       starschema/signaturecreator/LicenseGeneratorException.class" />
+             includes="starschema/slm4j/Base64Coder.class,
+                       starschema/slm4j/SignatureValidator.class,
+                       starschema/slm4j/LicenseGeneratorException.class" />
     </target>
 
 </project>
