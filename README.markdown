@@ -11,6 +11,50 @@ The project includes a command line tool to generate private and public keys for
 The signed data is an ASCII armored file, which could store date or time limitations, functionality restrictions or any user specified strings. The embedded license file validator ensures that file is not modified by using DSA algorythm.
 
 
+Command line usage
+------------------
+
+The following command signs input1.txt file and writes the result to output1.txt. If test1.pub (public key file) and test1.pkf (private key file) do not exists, then these files are automatically generated.
+
+  $ java -jar SignatureCreator.jar  sign -license input1.txt -public test1.pub -private test1.pkf -sign output1.txt
+
+After the initial key generation, the generated key files are used for futher sign actions.
+
+  $ java -jar SignatureCreator.jar  sign -license input2.txt -public test1.pub -private test1.pkf -sign output2.txt
+
+To verify the generated keys use the "verify" action:
+
+  $ java -jar SignatureCreator.jar verify -sign output1.txt -public test1.pub
+  License is valid
+  $ java -jar SignatureCreator.jar verify -sign output2.txt -public test1.pub
+  License is valid
+
+To check what happens if we modify the generated license file use our favourite editor and try it:
+
+  $ vim output2.txt
+  $ java -jar SignatureCreator.jar verify -sign output2.txt -public test1.pub
+  License is not valid
+
+
+Usage from java programs
+------------------------
+
+To validate a user supplied license file in your application, you must include your public key file in the binary distribution (eg. in a hardcoded static private string in your license handler class) and import __SignatureValidator.jar__ file. To check the input license file, issue:
+
+   private static final String PUBLIC_KEY = "...";
+
+   try {
+     if ( verifyLicenseWithString( PUBLIC_KEY, fileToValidate ) )
+       System.out.println("License is valid");
+     } else {
+       System.out.println("License is not valid");
+     }
+   } catch (SlmException ex) {
+     System.out.println("Can not load license information: " + ex.getMessage() );
+   }
+
+For more information please refer to included javadocs.
+
 Example license file
 --------------------
 

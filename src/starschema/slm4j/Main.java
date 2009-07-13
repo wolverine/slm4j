@@ -22,6 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+/**
+ * Starschema License Manager 4 Java - an easy-to-use, simple license file
+ * generator and validator engine
+ */
 package starschema.slm4j;
 
 import java.util.HashMap;
@@ -55,7 +60,22 @@ public class Main {
     }
 
     /** Main entry function for slm4j command line tool
-     *
+     *<p>
+     * Usage: java -jar SignatureCreator.jar <action> [parameters]
+     *<p>
+     *   Actions:
+     *     sign                         Write a signature in in the signature file after
+     *                                  the content of the source file.
+     *     verify                       Verifies a signature file based on the key file.
+     *   Parameters:
+     *     -license license_file        Source file to add signature.
+     *     -public public_key_file      Public key file. If sign then the public key will
+     *                                  be written in this file. If verify then the verification
+     *                                  will based on the public key stored in this file.
+     *     -private private_key_file    Private key file. Available only for sign. The private
+     *                                  key will be stored in this file.
+     *     -signed signature_file       The signed license file. It is the output file of the sign
+     *                                  and the input of the verification.
      * @param arguments Command line arguments
      * @return true on success, otherwise false
      */
@@ -86,7 +106,7 @@ public class Main {
             usageString[5] = "  -license license_file        Source file to add signature.";
             usageString[6] = "  -public public_key_file      Public key file. If sign then the public key will be written in this file. If verify then the verification will based on the public key stored in this file.";
             usageString[7] = "  -private private_key_file    Private key file. Available only for sign. The private key will be stored in this file.";
-            usageString[8] = "  -signed signature_file       The signed license file. It is the output file of the sign and the input of the verification.";
+            usageString[8] = "  -sign signature_file         The signed license file. It is the output file of the sign and the input of the verification.";
 
             if (arguments.length == 0) {
                 for( int i = 0; i < usageString.length ; i++ )
@@ -136,7 +156,7 @@ public class Main {
             }
 
             return true;
-        } catch (Exception ex) {
+        } catch (SlmException ex) {
             return false;
         }
     }

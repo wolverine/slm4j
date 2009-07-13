@@ -222,6 +222,8 @@ public class SignatureCreator {
 
     /** Signs an input file by the provided DSA keys
      *
+     * If the private key does not exists, then a new one will be generated
+     *
      * @param licenseFile Input file to sign
      * @param publicKeyFile Location of the previously generated public key file
      * @param privateKeyFile Location of the previously generated private key file
