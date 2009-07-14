@@ -27,6 +27,7 @@ package starschema.slm4j;
 import java.io.*;
 import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
 
 /** Validates provided signature file using DSA algorithm
  *
@@ -36,12 +37,53 @@ public class SignatureValidator {
 
     private PublicKey publicKey;
     private Signature signature;
+    private String token = "=";
+    private StringBuffer licenseText = new StringBuffer();
     private byte[] licenseSignature;
+    private HashMap licenseOptions = new HashMap();
     private static final String LICENSE_BEGIN = "----- BEGIN LICENSE -----";
     private static final String LICENSE_END = "----- END LICENSE -----";
     private static final String SIGNATURE_BEGIN = "----- BEGIN SIGNATURE -----";
     private static final String SIGNATURE_END = "----- END SIGNATURE -----";
-    private static final int SIGNATURE_LINE_LENGTH = 20;
+
+
+    /**
+     * Get the value of license options (signed key-value pairs, if presents)
+     *
+     * @return key-value pairs of strings
+     */
+    public HashMap getLicenseOptions() {
+        return licenseOptions;
+    }
+
+    /**
+     * Get the value of signed license contents
+     *
+     * @return the value of license contents
+     */
+    public String getLicenseText() {
+        return licenseText.toString();
+    }
+
+
+    /**
+     * Get the value of key-value separator token
+     *
+     * @return the value of key-value separator token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * Set the value of the key-value separator token
+     *
+     * @param token new value of the token
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 
     private void initializeSignatureVerify() throws SlmException {
         try {
@@ -60,6 +102,7 @@ public class SignatureValidator {
             bufferedReader = new BufferedReader(fileReader);
             boolean isLicense = true;
             String line;
+            int index = 0;
 
             isLicense = false;
 
@@ -72,8 +115,15 @@ public class SignatureValidator {
 
             while (bufferedReader.ready() && isLicense) {
                 line = bufferedReader.readLine();
+
                 if (!line.equals(LICENSE_END)) {
                     signature.update(line.getBytes(), 0, line.getBytes().length);
+
+                    licenseText.append(line);
+                    licenseText.append(System.getProperty("line.separator"));
+                    index = line.indexOf(token);
+                    if ( index != -1 && index+1 <= line.length() )
+                        licenseOptions.put(line.substring(0,index), line.substring(index+1));
                 } else {
                     isLicense = false;
                 }
@@ -127,7 +177,6 @@ public class SignatureValidator {
             boolean isSignature = false;
             String line;
             String signatureString = new String();
-
 
             while (bufferedReader.ready() && !isSignature) {
                 line = bufferedReader.readLine();

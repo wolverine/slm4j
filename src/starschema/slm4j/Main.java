@@ -74,7 +74,7 @@ public class Main {
      *                                  will based on the public key stored in this file.
      *     -private private_key_file    Private key file. Available only for sign. The private
      *                                  key will be stored in this file.
-     *     -signed signature_file       The signed license file. It is the output file of the sign
+     *     -sign signature_file         The signed license file. It is the output file of the sign
      *                                  and the input of the verification.
      * @param arguments Command line arguments
      * @return true on success, otherwise false
@@ -146,17 +146,17 @@ public class Main {
             if (arguments[0].equals(OPTION_SIGN)) {
                 new SignatureCreator().signLicense((String) parameters.get(PARAMETER_LICENSE), (String) parameters.get(PARAMETER_PUBLIC), (String) parameters.get(PARAMETER_PRIVATE), (String) parameters.get(PARAMETER_SIGNATURE));
             } else {
-                if (new SignatureValidator().verifyLicense((String) parameters.get(PARAMETER_PUBLIC), (String) parameters.get(PARAMETER_SIGNATURE))) {
+                SignatureValidator validator = new SignatureValidator();
+                if (validator.verifyLicense((String) parameters.get(PARAMETER_PUBLIC), (String) parameters.get(PARAMETER_SIGNATURE))) {
                     System.out.println("License is valid");
-
                 } else {
-                    System.out.println("License is not valid");
-                    
+                    System.out.println("License is not valid");                    
                 }
             }
 
             return true;
         } catch (SlmException ex) {
+            System.err.println("Error during license validation: " + ex.getMessage());
             return false;
         }
     }
