@@ -1,5 +1,5 @@
 /*
-   
+
  * Copyright (c) 2008, 2009, Starschema Limited
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -219,7 +219,6 @@ public class SignatureCreator {
         }
     }
 
-
     /** Signs an input file by the provided DSA keys
      *
      * If the private key does not exists, then a new one will be generated
@@ -232,12 +231,14 @@ public class SignatureCreator {
      */
     public void signLicense(String licenseFile, String publicKeyFile, String privateKeyFile, String signatureFile) throws SlmException {
         try {
-            if (!readPrivateKey(privateKeyFile)) {
+            if (privateKeyFile != null && !readPrivateKey(privateKeyFile)) {
                 generateKeys();
             }
+
             initializeSignatureSign();
             processSourceFile(licenseFile);
             writeSignature(signatureFile);
+
             if (!readPrivateKey(privateKeyFile)) {
                 writePublicKey(publicKeyFile);
                 writePrivateKey(privateKeyFile);

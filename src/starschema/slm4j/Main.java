@@ -22,16 +22,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /**
  * Starschema License Manager 4 Java - an easy-to-use, simple license file
  * generator and validator engine
  */
 package starschema.slm4j;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /** Main class for slm4j command line tool
  *
@@ -52,6 +55,30 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
+            if (args.length == 0) {
+                final InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true);
+
+                java.awt.EventQueue.invokeLater(new Runnable() {
+
+                    public void run() {
+                        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+
+                            public void windowClosing(java.awt.event.WindowEvent e) {
+                                System.exit(0);
+                            }
+                        });
+
+                        Toolkit toolkit = Toolkit.getDefaultToolkit();
+                        Dimension screenSize = toolkit.getScreenSize();
+                        int x = (screenSize.width - dialog.getWidth()) / 2;
+                        int y = (screenSize.height - dialog.getHeight()) / 2;
+                        dialog.setLocation(x, y);
+
+                        dialog.setVisible(true);
+                    }
+                });
+            }
+
             executeApplication(args);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -109,8 +136,9 @@ public class Main {
             usageString[8] = "  -sign signature_file         The signed license file. It is the output file of the sign and the input of the verification.";
 
             if (arguments.length == 0) {
-                for( int i = 0; i < usageString.length ; i++ )
-                    System.out.println( usageString[i]);
+                for (int i = 0; i < usageString.length; i++) {
+                    System.out.println(usageString[i]);
+                }
                 return false;
             }
 
@@ -150,7 +178,7 @@ public class Main {
                 if (validator.verifyLicense((String) parameters.get(PARAMETER_PUBLIC), (String) parameters.get(PARAMETER_SIGNATURE))) {
                     System.out.println("License is valid");
                 } else {
-                    System.out.println("License is not valid");                    
+                    System.out.println("License is not valid");
                 }
             }
 
